@@ -4,8 +4,8 @@ import { Band } from "../model/Band";
 
 export class UserDatabase extends BaseDatabase {
 
-  private static TABLE_USER = "";
-  private static TABLE_BAND = "";
+  private static TABLE_USER = "User_show";
+  private static TABLE_BAND = "Bands";
 
   public async createUser(
     id: string,
@@ -24,10 +24,10 @@ export class UserDatabase extends BaseDatabase {
           role
         })
         .into(UserDatabase.TABLE_USER);
-    } catch (error: any) {
+    } catch (error) {
       throw new Error(error.sqlMessage || error.message);
     }
-  }
+  };
 
   public async getUserByEmail(email: string): Promise<User> {
     const result = await this.getConnection()
@@ -35,8 +35,11 @@ export class UserDatabase extends BaseDatabase {
       .from(UserDatabase.TABLE_USER)
       .where({ email });
 
-    return User.toUserModel(result[0]);
-  }
+    console.log("result", result[0]);
+    const user: User = User.toUserModel(result[0]);
+    console.log("user", user);
+    return user
+  };
 
   public insertBandDB = async (band: Band): Promise<void> => {
     try {
@@ -49,7 +52,7 @@ export class UserDatabase extends BaseDatabase {
         })
         .into(UserDatabase.TABLE_BAND);
     } 
-    catch (error: any) {
+    catch (error) {
       throw new Error(error.sqlMessage || error.message);
     };
   };
@@ -64,7 +67,7 @@ export class UserDatabase extends BaseDatabase {
 
       return Band.toBandModel(result[0]);
     } 
-    catch (error: any) {
+    catch (error) {
       throw new Error(error.sqlMessage || error.message);
     };
   };

@@ -6,10 +6,9 @@ import { Authenticator } from "../services/Authenticator";
 import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/IdGenerator";
 
-
 export const userRouter = express.Router();
 
-const userController = new UserController(
+const userController: UserController = new UserController(
     new UserBusiness(
         new UserDatabase(),
         new IdGenerator(),
@@ -21,3 +20,4 @@ const userController = new UserController(
 userRouter.post("/signup", userController.signup);
 userRouter.post("/login", userController.login);
 userRouter.post("/band", userController.createBand);
+userRouter.get("/band/:input", userController.getBandDetails);

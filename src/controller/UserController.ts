@@ -3,28 +3,35 @@ import { UserInputDTO, LoginInputDTO} from "../model/User";
 import { UserBusiness } from "../business/UserBusiness";
 import { BaseDatabase } from "../data/BaseDatabase";
 import { BandInputDTO } from "../model/Band";
+import { UserDatabase } from "../data/UserDatabase";
+import { IdGenerator } from "../services/IdGenerator";
+import { HashManager } from "../services/HashManager";
+import { Authenticator } from "../services/Authenticator";
 
 export class UserController {
     constructor(
-     private userBusiness: UserBusiness,
-  
-    ){}
+        private userBusiness: UserBusiness
+    ){};
+
     async signup(request: Request, response: Response) {
         try {
-
             const input: UserInputDTO = {
                 email: request.body.email,
                 name: request.body.name,
                 password: request.body.password,
                 role: request.body.role
             }
-
             
-            const token = await this.userBusiness.createUser(input);
+            const userBusiness = new UserBusiness(
+                    new UserDatabase(),
+                    new IdGenerator(),
+                    new HashManager(),
+                    new Authenticator()
+                )
+            const token = await userBusiness.createUser(input);
 
             response.status(200).send({ token });
-
-        } catch (error:any) {
+        } catch (error) {
             response.status(400).send({ error: error.message });
         }
 
@@ -40,12 +47,17 @@ export class UserController {
                 password: request.body.password
             };
 
-            
-            const token = await this.userBusiness.getUserByEmail(loginData);
+            const userBusiness = new UserBusiness(
+                new UserDatabase(),
+                new IdGenerator(),
+                new HashManager(),
+                new Authenticator()
+            );
+            const token = await userBusiness.getUserByEmail(loginData);
 
             response.status(200).send({ token });
 
-        } catch (error:any) {
+        } catch (error) {
             response.status(400).send({ error: error.message });
         }
 
@@ -62,11 +74,17 @@ export class UserController {
                 responsible: req.body.responsible
             };
             
-            await this.userBusiness.createBand(input, token);
+            const userBusiness = new UserBusiness(
+                new UserDatabase(),
+                new IdGenerator(),
+                new HashManager(),
+                new Authenticator()
+            );
+            await userBusiness.createBand(input, token);
             
             res.status(201).send({message: "Band created successfully"});
         } 
-        catch (error: any) {
+        catch (error) {
             res.status(400).send({ error: error.message });
         };
     };
@@ -74,13 +92,19 @@ export class UserController {
     getBandDetails = async (req: Request, res: Response) => {
         try {
             const token = req.headers.authorization as string;
-            const input = req.params.input;
+            const input = req.params.input as string;
 
-            const band = await this.userBusiness.getBandDetails( input, token);
+            const userBusiness = new UserBusiness(
+                new UserDatabase(),
+                new IdGenerator(),
+                new HashManager(),
+                new Authenticator()
+            );
+            const band = await userBusiness.getBandDetails( input, token );
 
             res.status(200).send({message: "Success", band});
         } 
-        catch (error: any) {
+        catch (error) {
             res.status(400).send({ error: error.message });
         };
     };
