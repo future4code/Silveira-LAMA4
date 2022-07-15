@@ -1,39 +1,46 @@
-import { BaseDatabase } from "./BaseDatabase";
 import { User } from "../model/User";
+import { BaseDatabase } from "./BaseDatabase";
 
-export class UserDatabase extends BaseDatabase {
+export class UserDatabase extends BaseDatabase{
 
-  private static TABLE_NAME = "";
+    private static TABLE_NAME = "User_show"
 
-  public async createUser(
-    id: string,
-    email: string,
-    name: string,
-    password: string,
-    role: string
-  ): Promise<void> {
-    try {
-      await this.getConnection()
-        .insert({
-          id,
-          email,
-          name,
-          password,
-          role
-        })
-        .into(UserDatabase.TABLE_NAME);
-    } catch (error: any) {
-      throw new Error(error.sqlMessage || error.message);
+    signUp = async (newUser: User) => {
+        try {
+            await this.getConnection()
+                    .insert({
+                        id: newUser.getId(),
+                        name: newUser.getName(),
+                        email: newUser.getEmail(),
+                        password: newUser.getPassword(),
+                        role: newUser.getRole()
+                    })
+                    .into(UserDatabase.TABLE_NAME)
+
+        } catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
+        }
     }
-  }
 
-  public async getUserByEmail(email: string): Promise<User> {
-    const result = await this.getConnection()
-      .select("*")
-      .from(UserDatabase.TABLE_NAME)
-      .where({ email });
+    selectUserByEmail = async (email: string) => {
+        try {
+            const result = await this.getConnection()
+                .select("*")
+                .from(UserDatabase.TABLE_NAME)
+                .where({email})
 
-    return User.toUserModel(result[0]);
-  }
+            return result[0] && User.toUserModel(result[0])
 
+        } catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
+        }
+    }
 }

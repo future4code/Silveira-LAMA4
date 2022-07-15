@@ -1,19 +1,23 @@
-import dotenv from "dotenv";
-import {AddressInfo} from "net";
-import express from "express";
-import { userRouter } from "./routes/userRouter";
-dotenv.config();
-const app = express();
+import { UserBusiness } from "./business/UserBusiness";
+import { app } from "./controller/app";
+import { UserController } from "./controller/UserController";
+import { UserDatabase } from "./data/UserDatabase";
+import { Authenticator } from "./services/Authenticator";
+import { HashManager } from "./services/HashManager";
+import { IdGenerator } from "./services/IdGenerator";
 
-app.use(express.json());
+const userController = new UserController(
+    new UserBusiness(
+        new IdGenerator(),
+        new HashManager(),
+        new UserDatabase(),
+        new Authenticator()
+    )
+)
 
-app.use("/user", userRouter);
 
-const server = app.listen(3000, () => {
-    if (server) {
-      const address = server.address() as AddressInfo;
-      console.log(`Servidor rodando em http://localhost:${address.port}`);
-    } else {
-      console.error(`Falha ao rodar o servidor.`);
-    }
-  });
+
+
+app.post("/signup", userController.signUp)
+app.post("/login", userController.login)
+

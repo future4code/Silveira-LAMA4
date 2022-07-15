@@ -1,0 +1,11 @@
+POST http://localhost:3005/signup
+Content-Type: application/json
+
+
+{
+"email": "italose09@gmail.com",
+"name": "italo",
+"password": "12345678",
+"role": "admin"
+}
+
