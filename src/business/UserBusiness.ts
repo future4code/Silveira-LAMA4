@@ -72,4 +72,20 @@ export class UserBusiness {
 
         await this.userDatabase.insertBandDB(inputsBand);
     };
+
+    public getBandDetails = async (input: string, token: string) => {
+        if(!token || input){
+            throw new Error("Invalid input or authorization");
+        };
+
+        const tokenData = this.authenticator.getData(token);
+        
+        if(!tokenData){
+            throw new Error("Invalid token");
+        };
+
+        const band: Band = await this.userDatabase.getBandDetailsByIdOrName(input);
+
+        return band;
+    };
 };

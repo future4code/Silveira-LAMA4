@@ -53,4 +53,19 @@ export class UserDatabase extends BaseDatabase {
       throw new Error(error.sqlMessage || error.message);
     };
   };
+
+  public getBandDetailsByIdOrName = async ( input: string ): Promise<Band> => {
+    try {
+      const result = await this.getConnection()
+        .select("*")
+        .from(UserDatabase.TABLE_BAND)
+        .where({ id: input })
+        .orWhere({ name: input});
+
+      return Band.toBandModel(result[0]);
+    } 
+    catch (error: any) {
+      throw new Error(error.sqlMessage || error.message);
+    };
+  };
 };
