@@ -4,10 +4,10 @@ import { UserBusiness } from "../business/UserBusiness";
 import { BaseDatabase } from "../data/BaseDatabase";
 
 export class UserController {
-    constructor(
+    /*constructor(
      private userBusiness: UserBusiness,
   
-    ){}
+    ){}*/
     async signup(request: Request, response: Response) {
         try {
 
