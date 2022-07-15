@@ -1,54 +1,58 @@
 import { Request, Response } from "express";
-import { UserInputDTO, LoginInputDTO} from "../model/User";
 import { UserBusiness } from "../business/UserBusiness";
-import { BaseDatabase } from "../data/BaseDatabase";
+import { loginInputDTO } from "../types/loginInputDTO";
+import { UserInputDTO } from "../types/userInputDTO";
 
 export class UserController {
-    /*constructor(
-     private userBusiness: UserBusiness,
-  
-    ){}*/
-    async signup(request: Request, response: Response) {
+    constructor(
+        private userBusiness: UserBusiness
+    ) { }
+
+    signUp = async (req: Request, res: Response) => {
         try {
 
-            const input: UserInputDTO = {
-                email: request.body.email,
-                name: request.body.name,
-                password: request.body.password,
-                role: request.body.role
+            const { name, email, password, role } = req.body
+
+            const user: UserInputDTO = {
+                name,
+                email,
+                password,
+                role
             }
 
-            
-            const token = await this.userBusiness.createUser(input);
+            const token = await this.userBusiness.signUp(user)
 
-            response.status(200).send({ token });
-
-        } catch (error:any) {
-            response.status(400).send({ error: error.message });
+            res.status(201).send({ token })
+        } catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
         }
 
-        await BaseDatabase.destroyConnection();
     }
 
-    async login(request: Request, response: Response) {
-
+    login = async (req: Request, res: Response) => {
         try {
 
-            const loginData: LoginInputDTO = {
-                email: request.body.email,
-                password: request.body.password
-            };
+            const { email, password } = req.body
 
+            const user: loginInputDTO = {
+                email,
+                password
+            }
+
+            const token = await this.userBusiness.login(user)
+
+            res.status(200).send({ token })
             
-            const token = await this.userBusiness.getUserByEmail(loginData);
-
-            response.status(200).send({ token });
-
-        } catch (error:any) {
-            response.status(400).send({ error: error.message });
+        }catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
         }
-
-        await BaseDatabase.destroyConnection();
     }
-
 }

@@ -1,49 +1,85 @@
-import { UserInputDTO, LoginInputDTO } from "../model/User";
 import { UserDatabase } from "../data/UserDatabase";
-import { IdGenerator } from "../services/IdGenerator";
-import { HashManager } from "../services/HashManager";
+import { User, UserRole } from "../model/User";
 import { Authenticator } from "../services/Authenticator";
+import { HashManager } from "../services/HashManager";
+import { IdGenerator } from "../services/IdGenerator";
+import { loginInputDTO } from "../types/loginInputDTO";
+import { UserInputDTO } from "../types/userInputDTO";
 
 export class UserBusiness {
+
     constructor(
-     private userDatabase: UserDatabase,
-     private idgenerator: IdGenerator,
-     private hashmanager: HashManager,
-     private authenticator: Authenticator
-    ){}
+        private idGenerator: IdGenerator,
+        private hashManager: HashManager,
+        private userDatabase: UserDatabase,
+        private authenticator: Authenticator
+    ) {}
+    signUp = async (user: UserInputDTO) => {
+        try {
+            
+            const { name, email, password, role } = user
 
-    async createUser(user: UserInputDTO) {
+            if (!name || !email || !password || !role) {
+                throw new Error("Porfavor insira um dos dados mencionados no body")
+            }
 
-        
-        const id = this.idgenerator.generate();
+            if (password.length < 6) {
+                throw new Error("A senha precisa ter 6 ou mais caracteres!")
+            }
 
-        
-        const hashPassword = await this.hashmanager.hash(user.password);
+            const id = this.idGenerator.generate()
 
-        
-        await this.userDatabase.createUser(id, user.email, user.name, hashPassword, user.role);
+            const cryptedPassword = this.hashManager.createHash(password)
 
-       
-        const accessToken = this.authenticator.generateToken({ id, role: user.role });
+            const newUser = new User(id, name, email, cryptedPassword, role as UserRole)
 
-        return accessToken;
+            await this.userDatabase.signUp(newUser)
+
+            const token = this.authenticator.generateToken({id, role})
+
+            return token
+
+        } catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
+        }
     }
 
-    async getUserByEmail(user: LoginInputDTO) {
+    login = async (user: loginInputDTO) => {
+        try {
 
-        
-        const userFromDB = await this.userDatabase.getUserByEmail(user.email);
+            const { email, password } = user
 
-        
-        const hashCompare = await this.hashmanager.compare(user.password, userFromDB.getPassword());
+            if ( !email || !password ) {
+                throw new Error("Porfavor insira um dos dados mencionados no body, nome e senha!")
+            }
 
-        
-        const accessToken = this.authenticator.generateToken({ id: userFromDB.getId(), role: userFromDB.getRole() });
+            const userFromDB = await this.userDatabase.selectUserByEmail(email)
 
-        if (!hashCompare) {
-            throw new Error("Invalid Password!");
+            if (!userFromDB) {
+                throw new Error(`E-mail não cadastrado!`)
+            }
+
+            const isPasswordCorrect = this.hashManager.compareHash(password, userFromDB.getPassword())
+
+            if (!isPasswordCorrect) {
+                throw new Error(`Senha inválida!`)
+            }
+
+            const token = this.authenticator.generateToken({id: userFromDB.getId(), role: userFromDB.getRole()})
+
+            return token
+
+            
+        }catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
         }
-
-        return accessToken;
     }
 }

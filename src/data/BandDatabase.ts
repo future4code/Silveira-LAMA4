@@ -1,6 +1,6 @@
 import { BaseDatabase } from "./BaseDatabase";
 import { Band } from "../model/Band";
-import { NotFoundError } from "../error/NotFoundError";
+
 
 export class BandDatabase extends BaseDatabase {
 
@@ -32,7 +32,7 @@ export class BandDatabase extends BaseDatabase {
             .orWhere({name: input})
 
         if (!band[0]) {
-            throw new NotFoundError(`Unable to found band with input: ${input}`)
+            throw new Error(`Unable to found band with input: ${input}`)
         }
 
         return Band.toBand(band[0])!
