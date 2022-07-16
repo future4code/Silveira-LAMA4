@@ -7,14 +7,14 @@ export class HashManager {
 
     createHash = (plainText: string): string => {
         const rounds = Number(process.env.BCRYPT_COST)
-        const salt: string = genSaltSync(rounds)
-        const cypherText: string = hashSync(plainText, salt)
+        const salt: string = bcrypt.genSaltSync(rounds)
+        const cypherText: string = bcrypt.hashSync(plainText, salt)
 
         return cypherText
     }
 
     compareHash = (plainText: string, cypherText: string): boolean => {
-        return compareSync(plainText, cypherText)
+        return bcrypt.compareSync(plainText, cypherText)
     }
 
 }

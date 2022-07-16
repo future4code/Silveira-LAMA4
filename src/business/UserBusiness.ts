@@ -1,5 +1,5 @@
-
 import { UserDatabase } from "../data/UserDatabase";
+import { Band, BandInputDTO } from "../model/Band";
 import { User, UserRole } from "../model/User";
 import { Authenticator } from "../services/Authenticator";
 import { HashManager } from "../services/HashManager";
@@ -58,7 +58,7 @@ export class UserBusiness {
                 throw new Error("Porfavor insira um dos dados mencionados no body, nome e senha!")
             }
 
-            const userFromDB = await this.userDatabase.selectUserByEmail(email)
+            const userFromDB = await this.userDatabase.getUserByEmail(email)
 
             if (!userFromDB) {
                 throw new Error(`E-mail não cadastrado!`)
@@ -91,7 +91,7 @@ export class UserBusiness {
             throw new Error("Invalid inputs or authorization");
         };
 
-        const tokenData = this.authenticator.getData(token);
+        const tokenData = this.authenticator.getData(token)
         
         if(!tokenData){
             throw new Error("Invalid token");
@@ -100,7 +100,7 @@ export class UserBusiness {
         const idGenerator = new IdGenerator();
         const id = idGenerator.generate();
 
-        const inputsBand = Band.toBandModel({
+        const inputsBand = Band.toBand({
             id, 
             name, 
             music_genre, 
@@ -116,7 +116,7 @@ export class UserBusiness {
         };
 
         const authenticator = new Authenticator();
-        const tokenData = authenticator.getData(token);
+        const tokenData = authenticator.getData(token)
         
         if(!tokenData){
             throw new Error("Invalid token");
@@ -127,5 +127,5 @@ export class UserBusiness {
         return band;
     };
 };
-}
+
 

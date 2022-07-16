@@ -13,7 +13,7 @@ export class BandDatabase extends BaseDatabase {
                 .insert({
                     id: band.getId(),
                     name: band.getName(),
-                    music_genre: band.getMainGenre(),
+                    music_genre: band.getMusicGenre(),
                     responsible: band.getResponsible()
                 })
                 .into(BandDatabase.TABLE_NAME)

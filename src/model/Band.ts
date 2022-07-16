@@ -49,7 +49,7 @@ export class Band{
     }
 }
 
-};
+
 
 export interface BandInputDTO{
     name: string;
