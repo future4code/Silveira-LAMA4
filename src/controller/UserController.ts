@@ -11,6 +11,7 @@ import { Authenticator } from "../services/Authenticator";
 export class UserController {
     constructor(
         private userBusiness: UserBusiness
+
     ){};
 
     async signup(request: Request, response: Response) {

@@ -1,17 +1,20 @@
 import * as bcrypt from "bcryptjs";
+import dotenv from "dotenv"
 
+dotenv.config()
 
 export class HashManager {
 
-    public async hash(text: string): Promise<string> {
-        const rounds = 12;
-        const salt = await bcrypt.genSalt(rounds);
-        const result = await bcrypt.hash(text, salt);
-        return result;
+    createHash = (plainText: string): string => {
+        const rounds = Number(process.env.BCRYPT_COST)
+        const salt: string = genSaltSync(rounds)
+        const cypherText: string = hashSync(plainText, salt)
+
+        return cypherText
     }
 
-    public async compare(text: string, hash: string): Promise<boolean>{
-        return await bcrypt.compare(text, hash);
+    compareHash = (plainText: string, cypherText: string): boolean => {
+        return compareSync(plainText, cypherText)
     }
 
 }

@@ -64,17 +64,6 @@ export class User{
 
 }
 
-export interface UserInputDTO{
-    email: string;
-    password: string;
-    name: string;
-    role: string;
-}
-
-export interface LoginInputDTO{
-    email: string;
-    password: string;
-}
 
 export enum UserRole{
     NORMAL = "NORMAL",

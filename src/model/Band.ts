@@ -1,3 +1,4 @@
+
 export class Band{
     constructor(
         private id: string, 
@@ -38,9 +39,15 @@ export class Band{
         this.responsible = responsible;
     };
 
-    static toBandModel(band: any): Band {
-        return new Band(band.id, band.name, band.music_genre, band.responsible);
-    };
+ public static toBand(data?: any): Band | undefined {
+        return (data && new Band(
+            data.id,
+            data.name,
+            data.mainGenre || data.main_genre || data.music_genre || data.musicGenre,
+            data.responsible
+        ))
+    }
+}
 
 };
 
@@ -49,3 +56,6 @@ export interface BandInputDTO{
     music_genre: string;
     responsible: string;
 };
+
+   
+

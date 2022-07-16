@@ -1,57 +1,89 @@
-import { UserInputDTO, LoginInputDTO } from "../model/User";
+
 import { UserDatabase } from "../data/UserDatabase";
-import { IdGenerator } from "../services/IdGenerator";
-import { HashManager } from "../services/HashManager";
+import { User, UserRole } from "../model/User";
 import { Authenticator } from "../services/Authenticator";
-import { Band, BandInputDTO } from "../model/Band";
+import { HashManager } from "../services/HashManager";
+import { IdGenerator } from "../services/IdGenerator";
+import { loginInputDTO } from "../types/loginInputDTO";
+import { UserInputDTO } from "../types/userInputDTO";
 
 export class UserBusiness {
+
     constructor(
-        private userDatabase: UserDatabase,
         private idGenerator: IdGenerator,
         private hashManager: HashManager,
+        private userDatabase: UserDatabase,
         private authenticator: Authenticator
-    ){}
+    ) {}
+    signUp = async (user: UserInputDTO) => {
+        try {
+            
+            const { name, email, password, role } = user
 
-    async createUser(user: UserInputDTO) {
-        if(!user.email || !user.name || !user.password || !user.role){
-            throw new Error("Invalid inputs");
-        };
+            if (!name || !email || !password || !role) {
+                throw new Error("Porfavor insira um dos dados mencionados no body")
+            }
 
-        const id = this.idGenerator.generate();
+            if (password.length < 6) {
+                throw new Error("A senha precisa ter 6 ou mais caracteres!")
+            }
 
-        const hashPassword = await this.hashManager.hash(user.password);
-        
-        await this.userDatabase.createUser(id, user.email, user.name, hashPassword, user.role);
-       
-        const accessToken = this.authenticator.generateToken({ id, role: user.role });
-        console.log("business token:", accessToken);
+            const id = this.idGenerator.generate()
 
-        return accessToken;
-    }
+            const cryptedPassword = this.hashManager.createHash(password)
 
-    async getUserByEmail(user: LoginInputDTO) {
+            const newUser = new User(id, name, email, cryptedPassword, role as UserRole)
 
-        if(!user.email || !user.password){
-            throw new Error("Invalid inputs");
-        };
-        
-        const userDatabase = new UserDatabase();
-        const userFromDB = await userDatabase.getUserByEmail(user.email);
-        console.log("user from db",userFromDB);
-        const hashManager = new HashManager();
-        const hashCompare = await hashManager.compare(user.password, userFromDB.getPassword());
-        console.log("aquiROLEEEEE:",userFromDB.getRole())
-        const authenticator = new Authenticator();
-        const accessToken = authenticator.generateToken({ id: userFromDB.getId(), role: userFromDB.getRole() });
+            await this.userDatabase.signUp(newUser)
 
-        if (!hashCompare) {
-            throw new Error("Invalid Password!");
+            const token = this.authenticator.generateToken({id, role})
+
+            return token
+
+        } catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
         }
-
-        return accessToken;
     }
 
+    login = async (user: loginInputDTO) => {
+        try {
+
+            const { email, password } = user
+
+            if ( !email || !password ) {
+                throw new Error("Porfavor insira um dos dados mencionados no body, nome e senha!")
+            }
+
+            const userFromDB = await this.userDatabase.selectUserByEmail(email)
+
+            if (!userFromDB) {
+                throw new Error(`E-mail não cadastrado!`)
+            }
+
+            const isPasswordCorrect = this.hashManager.compareHash(password, userFromDB.getPassword())
+
+            if (!isPasswordCorrect) {
+                throw new Error(`Senha inválida!`)
+            }
+
+            const token = this.authenticator.generateToken({id: userFromDB.getId(), role: userFromDB.getRole()})
+
+            return token
+
+            
+        }catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
+        }
+    }
+    
     createBand = async (band: BandInputDTO, token: string) => {
         const { name, music_genre, responsible } = band;
 
@@ -95,3 +127,5 @@ export class UserBusiness {
         return band;
     };
 };
+}
+
