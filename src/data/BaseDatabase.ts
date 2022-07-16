@@ -2,6 +2,7 @@ import knex from "knex";
 import Knex from "knex";
 
 
+
 export abstract class BaseDatabase {
 
     private static connection: Knex | null = null;
@@ -11,6 +12,7 @@ export abstract class BaseDatabase {
         shows: "NOME_TABELA_SHOWS",
         users: "NOME_TABELAS_USUÁRIOS"
     }
+
 
     protected getConnection(): Knex{
         if(!BaseDatabase.connection){

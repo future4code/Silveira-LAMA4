@@ -1,4 +1,3 @@
-import { sign, verify } from "jsonwebtoken"
 import dotenv from "dotenv" 
 import { authenticationData } from "../types/authenticationData"
 

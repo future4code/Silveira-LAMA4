@@ -1,41 +1,45 @@
-export class Band {
 
+export class Band{
     constructor(
-        private id:  string,
-        private name: string,
-        private mainGenre: string,
+        private id: string, 
+        private name: string, 
+        private music_genre: string, 
         private responsible: string
-    ) {}
+    ){};
 
-    public getId(): string {
-        return this.id
-    }
+    getId(){
+        return this.id;
+    };
 
-    public getName(): string {
+    getName(){
         return this.name
-    }
+    };
 
-    public getMainGenre(): string {
-        return this.mainGenre
-    }
+    getMusicGenre(){
+        return this.music_genre;
+    };
 
-    public getResponsible(): string {
-        return this.responsible
-    }
+    getResponsible(){
+        return this.responsible;
+    };
 
-    public setName(name: string) {
-        this.name = name
-    }
+    setId(id: string){
+        this.id = id;
+    };
 
-    public setMainGenre(mainGenre: string) {
-        this.mainGenre = mainGenre
-    }
+    setName(name: string){
+        this.name = name;
+    };
 
-    public setResponsible(responsible: string) {
-        this.responsible = responsible
-    }
+    setEmail(musicGenre: string){
+        this.music_genre = musicGenre;
+    };
 
-    public static toBand(data?: any): Band | undefined {
+    setPassword(responsible: string){
+        this.responsible = responsible;
+    };
+
+ public static toBand(data?: any): Band | undefined {
         return (data && new Band(
             data.id,
             data.name,
@@ -45,8 +49,13 @@ export class Band {
     }
 }
 
-export interface BandInputDTO {
-    name: string,
-    mainGenre: string,
-    responsible: string
-}
+};
+
+export interface BandInputDTO{
+    name: string;
+    music_genre: string;
+    responsible: string;
+};
+
+   
+

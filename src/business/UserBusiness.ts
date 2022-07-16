@@ -1,3 +1,4 @@
+
 import { UserDatabase } from "../data/UserDatabase";
 import { User, UserRole } from "../model/User";
 import { Authenticator } from "../services/Authenticator";
@@ -82,4 +83,49 @@ export class UserBusiness {
             }
         }
     }
+    
+    createBand = async (band: BandInputDTO, token: string) => {
+        const { name, music_genre, responsible } = band;
+
+        if(!name || !music_genre || !responsible || !token ){
+            throw new Error("Invalid inputs or authorization");
+        };
+
+        const tokenData = this.authenticator.getData(token);
+        
+        if(!tokenData){
+            throw new Error("Invalid token");
+        };
+        
+        const idGenerator = new IdGenerator();
+        const id = idGenerator.generate();
+
+        const inputsBand = Band.toBandModel({
+            id, 
+            name, 
+            music_genre, 
+            responsible
+        });
+        const userDatabase = new UserDatabase();
+        await userDatabase.insertBandDB(inputsBand);
+    };
+
+    public getBandDetails = async (input: string, token: string) => {
+        if(!token || !input){
+            throw new Error("Invalid input or authorization");
+        };
+
+        const authenticator = new Authenticator();
+        const tokenData = authenticator.getData(token);
+        
+        if(!tokenData){
+            throw new Error("Invalid token");
+        };
+        const userDatabase = new UserDatabase();
+        const band: Band = await userDatabase.getBandDetailsByIdOrName(input);
+
+        return band;
+    };
+};
 }
+
