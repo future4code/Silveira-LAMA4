@@ -1,6 +1,4 @@
-import {showMock} from "../tests/Mocks/ShowMock"
 import {ShowBusiness} from "../src/business/ShowBusiness"
-import { response } from "express";
 import { UserBusiness } from "../src/business/UserBusiness";
 import { BandDatabase } from "../src/data/BandDatabase";
 import { HashManagerMock } from "../tests/Mocks/hashGeneratorMock";
@@ -64,8 +62,8 @@ test("registerBand", () => {
  
      try {
        await BandBusinessMock.createBand(bandad, "1231412")
-       expect(response.status(201))
-     } catch (error:any) {
+       expect(201)
+     } catch (error) {
        expect(error.statusCode).toBe(400)
        expect(error.message).toBe("Invalid inputs or authorization")
      }
@@ -81,7 +79,7 @@ test("registerBand", () => {
  
      try {
        await BandBusinessMock.createBand(bandadi, "1231412")
-     } catch (error:any) {
+     } catch (error) {
        expect(error.statusCode).toBe(400)
        expect(error.message).toBe("Invalid inputs or authorization")
      }
@@ -100,7 +98,7 @@ test("registerBand", () => {
       const result = await createShow("1", Weekday.SEXTA, "band_1", "09",)
 
       
-      expect(result).toEqual({
+      expect(result).toBe({
         message: "Show created successfully"
       })
     } catch (error) {
