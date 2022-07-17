@@ -1,9 +1,9 @@
 export class HashManagerMock {
-    public createHash = async (s: string) => {
+    createHash = (plainText: string): string => {
         return "hash"
     }
 
-    public compareHash = async (s: string, hash: string) => {
-        return s === hash
+    compareHash = (plainText: string, cypherText: string): boolean => {
+        return plainText === cypherText
     }
 }

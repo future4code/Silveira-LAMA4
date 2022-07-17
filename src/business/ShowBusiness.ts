@@ -12,7 +12,7 @@ export class ShowBusiness {
         private bandDatabase: BandDatabase,
         private idGenerator: IdGenerator,
         private authenticator: Authenticator,
-        private show: Show
+        
     ) {}
 
     async createShow(input: ShowInputDTO, token: string) {

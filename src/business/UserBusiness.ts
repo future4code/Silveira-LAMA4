@@ -1,3 +1,4 @@
+import { BandDatabase } from "../data/BandDatabase";
 import { UserDatabase } from "../data/UserDatabase";
 import { Band, BandInputDTO } from "../model/Band";
 import { User, UserRole } from "../model/User";
@@ -13,7 +14,8 @@ export class UserBusiness {
         private idGenerator: IdGenerator,
         private hashManager: HashManager,
         private userDatabase: UserDatabase,
-        private authenticator: Authenticator
+        private authenticator: Authenticator,
+        private bandDatabase: BandDatabase
     ) {}
     signUp = async (user: UserInputDTO) => {
         try {
@@ -97,8 +99,8 @@ export class UserBusiness {
             throw new Error("Invalid token");
         };
         
-        const idGenerator = new IdGenerator();
-        const id = idGenerator.generate();
+        
+        const id = this.idGenerator.generate();
 
         const inputsBand = Band.toBand({
             id, 
@@ -106,8 +108,8 @@ export class UserBusiness {
             music_genre, 
             responsible
         });
-        const userDatabase = new UserDatabase();
-        await userDatabase.insertBandDB(inputsBand);
+        
+        await this.userDatabase.insertBandDB(inputsBand);
     };
 
     public getBandDetails = async (input: string, token: string) => {
@@ -115,14 +117,14 @@ export class UserBusiness {
             throw new Error("Invalid input or authorization");
         };
 
-        const authenticator = new Authenticator();
-        const tokenData = authenticator.getData(token)
+        
+        const tokenData = this.authenticator.getData(token)
         
         if(!tokenData){
             throw new Error("Invalid token");
         };
-        const userDatabase = new UserDatabase();
-        const band: Band = await userDatabase.getBandDetailsByIdOrName(input);
+        
+        const band: Band = await this.userDatabase.getBandDetailsByIdOrName(input);
 
         return band;
     };

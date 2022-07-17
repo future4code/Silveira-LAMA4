@@ -1,4 +1,4 @@
-import {ShowMock} from "../tests/Mocks/ShowMock"
+import {showMock} from "../tests/Mocks/ShowMock"
 import {ShowBusiness} from "../src/business/ShowBusiness"
 import { response } from "express";
 import { UserBusiness } from "../src/business/UserBusiness";
@@ -9,23 +9,24 @@ import { TokenGeneratorMock } from "../tests/Mocks/tokenGeneratorMock";
 import { BandDatabaseMock } from "./Mocks/BandDatabaseMock";
 import { ShowDatabaseMock } from "./Mocks/ShowDatabaseMock";
 import { ShowDatabase } from "../src/data/ShowDatabase";
-import { Show } from "../src/model/Show";
 import { Authenticator } from "../src/services/Authenticator";
 import { Weekday } from "../src/model/Show";
+import { UserDatabase } from "../src/data/UserDatabase";
+
 
 
 const BandBusinessMock = new UserBusiness(
     new IdGeneratorMock(),
     new HashManagerMock(),
+    new UserDatabase,
+    new TokenGeneratorMock(),
     new BandDatabaseMock() as BandDatabase,
-    new TokenGeneratorMock()
 )
 const ShowBusinessMock = new ShowBusiness(
     new ShowDatabaseMock() as ShowDatabase,
     new BandDatabaseMock() as BandDatabase,
     new IdGeneratorMock(),
-    new TokenGeneratorMock() as Authenticator,
-    new ShowMock() as Show
+    new TokenGeneratorMock() as Authenticator, 
 )
 
 const bandad = {

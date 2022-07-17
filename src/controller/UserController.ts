@@ -52,38 +52,38 @@ export class UserController {
         await BaseDatabase.destroyConnection();
     }
 
-    createBand = async (req: Request, res: Response) => {
+    createBand = async (request: Request, response: Response) => {
         try {
-            const token = req.headers.authorization as string;
+            const token = request.headers.authorization as string;
 
             const input: BandInputDTO = {
-                name: req.body.name,
-                music_genre: req.body.music_genre,
-                responsible: req.body.responsible
+                name: request.body.name,
+                music_genre: request.body.music_genre,
+                responsible: request.body.responsible
             };
             
             
             await this.userBusiness.createBand(input, token);
             
-            res.status(201).send({message: "Band created successfully"});
+            response.status(201).send({message: "Band created successfully"});
         } 
         catch (error) {
-            res.status(400).send({ error: error.message });
+            response.status(400).send({ error: error.message });
         };
     };
 
-    getBandDetails = async (req: Request, res: Response) => {
+    getBandDetails = async (request: Request, response: Response) => {
         try {
-            const token = req.headers.authorization as string;
-            const input = req.params.input as string;
+            const token = request.headers.authorization as string;
+            const input = request.body.input as string;
 
             
             const band = await this.userBusiness.getBandDetails( input, token );
 
-            res.status(200).send({message: "Success", band});
+            response.status(200).send({message: "Success", band});
         } 
         catch (error) {
-            res.status(400).send({ error: error.message });
+            response.status(400).send({ error: error.message });
         };
     };
 

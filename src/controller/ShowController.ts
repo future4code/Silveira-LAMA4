@@ -1,7 +1,6 @@
-import { Show, ShowInputDTO, Weekday } from "../model/Show";
+import { ShowInputDTO, Weekday } from "../model/Show";
 import { Request, Response } from "express";
 import { ShowBusiness } from "../business/ShowBusiness";
-import { UserBusiness } from "../business/UserBusiness";
 import { Band } from "../model/Band";
 
 
@@ -11,13 +10,10 @@ import { Band } from "../model/Band";
 
 
 
-export class BandController {
+export class ShowController {
     constructor(
         private showBusiness: ShowBusiness,
-        private userBusiness: UserBusiness,
         private band: Band,
-        private show: Show
-
     ){};
 
     createShow = async (request: Request, response: Response) => {
@@ -43,13 +39,13 @@ export class BandController {
 
     getShowsByTimes = async (request: Request, response: Response) => {
         try {
-            const input = request.params.input as Weekday;
+            const input = request.body.input as Weekday;
 
             
             const result = await this.showBusiness.getShowsByTimes(input)
 
 
-           const infoShow =  result.filter((this.band.getId)
+            const infoShow =  result.filter((this.band.getId)
             )
             const showDetail = await this.showBusiness.getShowsByTimes(infoShow as any) 
            
