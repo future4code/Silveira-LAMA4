@@ -73,8 +73,10 @@ export class ShowBusiness {
 
 
         async getShowDetail(){
+
+            const show = new Show("01", Weekday.SEXTA, "", 0, 0)
  
-            const result1 = await this.showDatabase.getShowDetail(this.show.getBandId as any) 
+            const result1 = await this.showDatabase.getShowDetail(show.getBandId as any) 
         
             return result1
 

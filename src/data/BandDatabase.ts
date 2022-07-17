@@ -17,9 +17,13 @@ export class BandDatabase extends BaseDatabase {
                     responsible: band.getResponsible()
                 })
                 .into(BandDatabase.TABLE_NAME)
-        } catch (error: any) {
-            throw new Error(error.sqlMessage || error.message)
-        }
+        } catch (error) {
+            if(error instanceof Error ){
+              throw new Error(error.message)
+            }else{
+              throw new Error("erro desconhecido")
+            }
+          }
     }
 
 
