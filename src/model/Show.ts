@@ -1,4 +1,4 @@
-import { InvalidInputError } from "../error/InvalidInputError"
+
 
 export class Show {
 
@@ -51,7 +51,7 @@ export class Show {
             case "DOMINGO":
                 return Weekday.DOMINGO
             default:
-                throw new InvalidInputError("Invalid weekDay")
+                throw new Error("Invalid weekDay")
         }
     }
 
@@ -73,18 +73,18 @@ export enum Weekday {
 }
 
 export interface ShowInputDTO {
-    bandId: string,
-    weekDay: Weekday,
-    startTime: number,
-    endTime: number
+    id_band: string,
+    Wday: Weekday,
+    start_time: number,
+    end_time: number
 }
 
 export interface ShowOutputDTO {
     id: string,
-    bandId: string,
-    weekDay: Weekday,
-    startTime: number,
-    endTime: number,
+    id_band: string,
+    Wday: Weekday,
+    start_time: number,
+    end_time: number,
     mainGenre?: string,
     bandName?: string
 }

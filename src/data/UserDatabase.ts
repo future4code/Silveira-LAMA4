@@ -7,27 +7,27 @@ export class UserDatabase extends BaseDatabase {
   private static TABLE_USER = "User_show";
   private static TABLE_BAND = "Bands";
 
-  public async createUser(
-    id: string,
-    email: string,
-    name: string,
-    password: string,
-    role: string
-  ): Promise<void> {
+  public signUp = async(
+    user: User
+ ): Promise<void> => {
     try {
-      await this.getConnection()
-        .insert({
-          id,
-          email,
-          name,
-          password,
-          role
-        })
-        .into(UserDatabase.TABLE_USER);
+       await this.getConnection()
+       .insert({
+          id: user.getId,
+          name: user.getName,
+          email: user.getEmail,
+          password: user.getPassword
+       }).into(UserDatabase.TABLE_USER)
+
     } catch (error) {
-      throw new Error(error.sqlMessage || error.message);
+       if(error instanceof Error ){
+          throw new Error(error.message)
+        }else{
+          throw new Error("erro desconhecido")
+        }
     }
-  };
+
+ }
 
   public async getUserByEmail(email: string): Promise<User> {
     const result = await this.getConnection()
@@ -65,7 +65,7 @@ export class UserDatabase extends BaseDatabase {
         .where({ id: input })
         .orWhere({ name: input});
 
-      return Band.toBandModel(result[0]);
+      return Band.toBand(result[0]);
     } 
     catch (error) {
       throw new Error(error.sqlMessage || error.message);

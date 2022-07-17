@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
-import { UserInputDTO, LoginInputDTO} from "../model/User";
+import { UserInputDTO} from "../types/userInputDTO";
 import { UserBusiness } from "../business/UserBusiness";
 import { BaseDatabase } from "../data/BaseDatabase";
 import { BandInputDTO } from "../model/Band";
-import { UserDatabase } from "../data/UserDatabase";
-import { IdGenerator } from "../services/IdGenerator";
-import { HashManager } from "../services/HashManager";
-import { Authenticator } from "../services/Authenticator";
+import { loginInputDTO } from "../types/loginInputDTO";
+
 
 export class UserController {
     constructor(
@@ -23,13 +21,8 @@ export class UserController {
                 role: request.body.role
             }
             
-            const userBusiness = new UserBusiness(
-                    new UserDatabase(),
-                    new IdGenerator(),
-                    new HashManager(),
-                    new Authenticator()
-                )
-            const token = await userBusiness.createUser(input);
+            
+            const token = await this.userBusiness.signUp(input);
 
             response.status(200).send({ token });
         } catch (error) {
@@ -43,18 +36,12 @@ export class UserController {
 
         try {
 
-            const loginData: LoginInputDTO = {
+            const loginData: loginInputDTO = {
                 email: request.body.email,
                 password: request.body.password
             };
 
-            const userBusiness = new UserBusiness(
-                new UserDatabase(),
-                new IdGenerator(),
-                new HashManager(),
-                new Authenticator()
-            );
-            const token = await userBusiness.getUserByEmail(loginData);
+            const token = await this.userBusiness.login(loginData);
 
             response.status(200).send({ token });
 
@@ -65,48 +52,38 @@ export class UserController {
         await BaseDatabase.destroyConnection();
     }
 
-    createBand = async (req: Request, res: Response) => {
+    createBand = async (request: Request, response: Response) => {
         try {
-            const token = req.headers.authorization as string;
+            const token = request.headers.authorization as string;
 
             const input: BandInputDTO = {
-                name: req.body.name,
-                music_genre: req.body.music_genre,
-                responsible: req.body.responsible
+                name: request.body.name,
+                music_genre: request.body.music_genre,
+                responsible: request.body.responsible
             };
             
-            const userBusiness = new UserBusiness(
-                new UserDatabase(),
-                new IdGenerator(),
-                new HashManager(),
-                new Authenticator()
-            );
-            await userBusiness.createBand(input, token);
             
-            res.status(201).send({message: "Band created successfully"});
+            await this.userBusiness.createBand(input, token);
+            
+            response.status(201).send({message: "Band created successfully"});
         } 
         catch (error) {
-            res.status(400).send({ error: error.message });
+            response.status(400).send({ error: error.message });
         };
     };
 
-    getBandDetails = async (req: Request, res: Response) => {
+    getBandDetails = async (request: Request, response: Response) => {
         try {
-            const token = req.headers.authorization as string;
-            const input = req.params.input as string;
+            const token = request.headers.authorization as string;
+            const input = request.body.input as string;
 
-            const userBusiness = new UserBusiness(
-                new UserDatabase(),
-                new IdGenerator(),
-                new HashManager(),
-                new Authenticator()
-            );
-            const band = await userBusiness.getBandDetails( input, token );
+            
+            const band = await this.userBusiness.getBandDetails( input, token );
 
-            res.status(200).send({message: "Success", band});
+            response.status(200).send({message: "Success", band});
         } 
         catch (error) {
-            res.status(400).send({ error: error.message });
+            response.status(400).send({ error: error.message });
         };
     };
 
