@@ -7,7 +7,6 @@ import { BandDatabase } from "./data/BandDatabase";
 import { ShowDatabase } from "./data/ShowDatabase";
 import { UserDatabase } from "./data/UserDatabase";
 import { Band } from "./model/Band";
-import { Show, Weekday } from "./model/Show";
 import { Authenticator } from "./services/Authenticator";
 import { HashManager } from "./services/HashManager";
 import { IdGenerator } from "./services/IdGenerator";
