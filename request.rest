@@ -1,0 +1,65 @@
+POST http://localhost:3005/signup
+Content-Type: application/json
+
+
+{
+"email": "italose09@gmail.com",
+"name": "italo",
+"password": "12345678",
+"role": "admin"
+}
+
+###
+
+POST http://localhost:3005/login
+Content-Type: application/json
+
+{
+"email": "italose09@gmail.com",
+"password": "12345678",
+}
+
+###
+
+POST http://localhost:3005/createband
+Authorization: {Token.headers}
+Content-Type: application/json
+
+{
+"name":"loucura",
+"music_genre": "rock",
+"responsible": "italo"
+}
+
+###
+
+GET http://localhost:3005/getbanddetail
+Authorization: {Token.headers}
+Content-Type: application/json
+
+{
+    "id":"",
+    "name":""
+}
+
+###
+
+POST http://localhost:3005/createshow
+Authorization: {Token.headers}
+Content-Type: application/json
+
+{
+    "id_band": "",
+    "Wday": "",
+    "start_time": "",
+    "end_time": ""
+}
+
+###
+
+GET http://localhost:3005/getshows
+Content-Type: application/json
+
+{
+    "Wday": ""
+}
